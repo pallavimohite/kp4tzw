@@ -7,7 +7,7 @@ A web app that helps a UK energy utility's day-ahead trading team answer two que
 
 Data: GB national wind generation from [Elexon BMRS](https://bmrs.elexon.co.uk/), actuals (`FUELHH`, fuelType `WIND`) and forecasts (`WINDFOR`), for purchase decisions made in **January 2026**.
 
-**Live app:** _link to be added after deployment_
+**Live app:** https://kp4tzw.vercel.app
 
 ---
 

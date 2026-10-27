@@ -15,29 +15,36 @@ export const axisProps = {
   stroke: color.axis,
   tick: { fill: color.axis, fontSize: 11, fontFamily: mono },
   tickLine: false,
-  axisLine: false,
+  axisLine: { stroke: 'var(--baseline)' },
 }
 
 export const gridProps = { stroke: color.grid, vertical: false }
 
 export const tooltipProps = {
   contentStyle: {
-    background: 'var(--paper)',
-    border: '1px solid var(--ink)',
-    borderRadius: 0,
-    color: 'var(--ink)',
+    background: 'var(--surface-1)',
+    border: '1px solid var(--border)',
+    borderRadius: 6,
+    boxShadow: 'var(--shadow-lg)',
+    color: 'var(--text-primary)',
     fontSize: 13,
     padding: '8px 10px',
   },
-  labelStyle: { fontFamily: mono, fontSize: 11, color: 'var(--muted)', marginBottom: 4 },
+  labelStyle: { color: 'var(--text-secondary)', marginBottom: 4, fontFamily: mono, fontSize: 12 },
 }
 
-/** Text label for an annotation drawn on a chart (ReferenceDot / ReferenceArea label). */
-export const annotation = (value: string, position: 'top' | 'right' | 'left' | 'insideTop' | 'insideTopLeft' = 'top') => ({
+// Legend text stays in normal ink; the line swatch next to it carries the colour
+export const legendProps = {
+  iconType: 'plainline' as const,
+  wrapperStyle: { fontSize: 13 },
+  formatter: (value: string) => <span style={{ color: 'var(--text-secondary)' }}>{value}</span>,
+}
+
+/** Label for a note written on a chart (ReferenceDot / ReferenceArea), e.g. "28 Jan: +5.3 GW". */
+export const annotation = (value: string, position: 'top' | 'bottom' | 'insideTop' = 'top') => ({
   value,
   position,
-  fill: 'var(--ink)',
+  fill: 'var(--text-primary)',
   fontSize: 12,
-  fontStyle: 'italic' as const,
-  fontFamily: "'Newsreader', Georgia, serif",
+  fontWeight: 500,
 })

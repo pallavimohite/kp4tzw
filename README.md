@@ -1,4 +1,4 @@
-# Wind Forecast Review
+# WindSight: Day-ahead Wind Forecast Monitor
 
 A web app that helps a UK energy utility's day-ahead trading team answer two questions:
 
@@ -40,19 +40,15 @@ actual wind in 9 of 10 hours.
 
 ## Features
 
-The app is a single scrolling **report for the day-ahead desk**, in an editorial style, with every number live from the API:
-
-- **Headline finding** written from the data, plus the key figures: typical miss, days short, the safety margin
-  that covered 9 in 10 hours, and the worst hour.
-- **1 · How wrong is the forecast?** Daily bias (annotated worst days), error by hour of day, error distribution,
-  and the five hardest days (each links to section 2).
-- **2 · One day, up close.** A timeline of forecast published → order deadline → delivery, a plain-English summary,
-  and the decision-time forecast vs actual (30-min) with an 80% uncertainty band and the largest miss marked.
-- **3 · Would a fresher forecast help?** Error vs lead time using every published forecast, with the day-ahead
-  decision window shaded.
-- **Notes on method:** the decision rule, data, measures and caveats.
-- **Order deadline selector** in the sticky header (EPEX 09:20, N2EX 09:50 or any time); all sections update.
-  Every chart has a "Show data" table view; responsive, with light/dark theme.
+- **Overview:** the key finding in one sentence, headline numbers (typical miss, bias, 80% error range, worst hour),
+  daily bias with the worst days labelled, error by hour of day, error distribution, and the five hardest days
+  (click through to the daily view).
+- **Daily view:** a timeline of forecast used → order deadline → delivery, the decision-time forecast vs actual
+  (30-min), an 80% uncertainty band from January's errors, and the day's largest miss marked on the chart.
+- **Forecast horizon:** error vs lead time using every published forecast, with the day-ahead decision window shaded.
+- **Methodology:** the decision rule, data, metric definitions and caveats in plain language.
+- **Order deadline selector** shared by all pages (EPEX 09:20, N2EX 09:50 or any time). Every chart has a
+  "Show data" table view; responsive layout with light/dark theme.
 
 ## Architecture
 
@@ -89,10 +85,10 @@ Elexon API ──(fetch script)──> cached JSON ──> FastAPI services ─�
 │   ├── src/
 │   │   ├── api/client.ts        typed API client
 │   │   ├── hooks/useApi.ts      data-fetching hook
-│   │   ├── components/          report building blocks (Section, Figure, Chart) and chart theme
-│   │   ├── sections/            Lede, AccuracySection, DaySection, HorizonSection, MethodNotes
+│   │   ├── components/          KPI tiles, chart cards, decision timeline, chart theme
+│   │   ├── pages/               AccuracyPage (Overview), DayPage, HorizonPage, MethodologyPage
 │   │   ├── format.ts            number/date formatting (UK time)
-│   │   └── App.tsx              masthead, order-deadline selector, report layout
+│   │   └── App.tsx              header, tabs, shared order-deadline selector
 │   ├── nginx.conf               serves the build and proxies /api in Docker
 │   └── Dockerfile
 ├── api/index.py                 Vercel entry point (re-exports the FastAPI app)

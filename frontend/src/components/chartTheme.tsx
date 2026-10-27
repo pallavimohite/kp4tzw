@@ -9,31 +9,35 @@ export const color = {
   axis: 'var(--muted)',
 }
 
+const mono = "'IBM Plex Mono', ui-monospace, monospace"
+
 export const axisProps = {
   stroke: color.axis,
-  tick: { fill: color.axis, fontSize: 12 },
+  tick: { fill: color.axis, fontSize: 11, fontFamily: mono },
   tickLine: false,
-  axisLine: { stroke: 'var(--baseline)' },
+  axisLine: false,
 }
 
 export const gridProps = { stroke: color.grid, vertical: false }
 
 export const tooltipProps = {
   contentStyle: {
-    background: 'var(--surface-1)',
-    border: '1px solid var(--border)',
-    borderRadius: 10,
-    boxShadow: 'var(--shadow-lg)',
-    color: 'var(--text-primary)',
+    background: 'var(--paper)',
+    border: '1px solid var(--ink)',
+    borderRadius: 0,
+    color: 'var(--ink)',
     fontSize: 13,
-    padding: '10px 12px',
+    padding: '8px 10px',
   },
-  labelStyle: { color: 'var(--text-secondary)', marginBottom: 4, fontWeight: 600 },
+  labelStyle: { fontFamily: mono, fontSize: 11, color: 'var(--muted)', marginBottom: 4 },
 }
 
-// Legend text stays in normal ink; the line swatch next to it carries the colour
-export const legendProps = {
-  iconType: 'plainline' as const,
-  wrapperStyle: { fontSize: 13 },
-  formatter: (value: string) => <span style={{ color: 'var(--text-secondary)' }}>{value}</span>,
-}
+/** Text label for an annotation drawn on a chart (ReferenceDot / ReferenceArea label). */
+export const annotation = (value: string, position: 'top' | 'right' | 'left' | 'insideTop' | 'insideTopLeft' = 'top') => ({
+  value,
+  position,
+  fill: 'var(--ink)',
+  fontSize: 12,
+  fontStyle: 'italic' as const,
+  fontFamily: "'Newsreader', Georgia, serif",
+})

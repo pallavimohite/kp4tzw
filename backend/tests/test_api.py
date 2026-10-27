@@ -41,6 +41,9 @@ def test_accuracy_report_shape():
     assert body["overall"]["count"] == 31 * 24  # 31 delivery days x 24 hourly forecasts
     assert len(body["by_hour"]) == 24
     assert len(body["by_day"]) == 31
+    assert len(body["series"]) == 31 * 24
+    first = body["series"][0]
+    assert first["time"].startswith("2026-01-02T00:00") and first["forecast"] > 0 and first["actual"] > 0
 
 
 def test_accuracy_range_validation():

@@ -52,45 +52,37 @@ export default function App() {
         <div className="appbar-inner">
           <div className="brand">
             <Logo />
-            <div>
-              <div className="brand-name">WindSight</div>
-              <div className="brand-tag">How far to trust the wind forecast when buying day-ahead</div>
-            </div>
+            <span className="brand-name">WindSight</span>
           </div>
-          <div className="appbar-meta">GB national wind · Jan 2026 pilot · Elexon BMRS data</div>
+          <nav className="tabs" role="tablist">
+            {TABS.map((t) => (
+              <button key={t.id} role="tab" aria-selected={tab === t.id} className={tab === t.id ? 'active' : ''}
+                      onClick={() => setTab(t.id)}>
+                {t.label}
+              </button>
+            ))}
+          </nav>
+          {meta && (
+            <div className="deadline" title="Order deadline on the day before delivery, UK time">
+              <span className="deadline-label">Deadline</span>
+              <div className="segmented" role="group" aria-label="Order deadline">
+                {meta.cutoff_presets.map((p) => (
+                  <button key={p.time} className={cutoff === p.time ? 'active' : ''} onClick={() => setCutoff(p.time)}
+                          title={p.label}>
+                    {p.label.split(' ')[0] === 'Nord' ? 'N2EX' : 'EPEX'} {p.time}
+                  </button>
+                ))}
+                <label className={`seg-custom ${!isPreset ? 'active' : ''}`}>
+                  <input type="time" value={cutoff} onChange={(e) => e.target.value && setCutoff(e.target.value)}
+                         aria-label="Custom order deadline" />
+                </label>
+              </div>
+            </div>
+          )}
         </div>
-        <nav className="tabs" role="tablist">
-          {TABS.map((t) => (
-            <button key={t.id} role="tab" aria-selected={tab === t.id} className={tab === t.id ? 'active' : ''}
-                    onClick={() => setTab(t.id)}>
-              {t.label}
-            </button>
-          ))}
-        </nav>
       </header>
 
       <div className="app">
-        {meta && tab !== 'method' && (
-          <div className="toolbar">
-            <div className="toolbar-label">
-              <strong>Order deadline</strong> on the day before delivery (UK time)
-            </div>
-            <div className="segmented" role="group" aria-label="Order deadline">
-              {meta.cutoff_presets.map((p) => (
-                <button key={p.time} className={cutoff === p.time ? 'active' : ''} onClick={() => setCutoff(p.time)}
-                        title={p.label}>
-                  {p.label.split(' (')[0].replace(' day-ahead auction', '')} <span className="seg-time">{p.time}</span>
-                </button>
-              ))}
-              <label className={`seg-custom ${!isPreset ? 'active' : ''}`}>
-                Other
-                <input type="time" value={cutoff} onChange={(e) => e.target.value && setCutoff(e.target.value)}
-                       aria-label="Custom order deadline" />
-              </label>
-            </div>
-          </div>
-        )}
-
         <main>
           <Status loading={loading} error={error} />
           {meta && tab === 'overview' && <AccuracyPage cutoff={cutoff} openDay={openDay} />}
@@ -100,7 +92,7 @@ export default function App() {
         </main>
 
         <footer>
-          <span>Error = forecast − actual. Positive means less wind arrived than forecast, so extra power had to be bought.</span>
+          <span>GB national wind · day-ahead pilot, January 2026 · error = forecast − actual</span>
           <span>Data: Elexon BMRS (FUELHH, WINDFOR)</span>
         </footer>
       </div>

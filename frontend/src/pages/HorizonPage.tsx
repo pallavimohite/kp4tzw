@@ -22,27 +22,20 @@ export function HorizonPage({ cutoff }: { cutoff: string }) {
 
   return (
     <>
-      <PageIntro title="Would a fresher forecast help?">
-        Every forecast Elexon published for January delivery, grouped by how many hours ahead it was made.
-      </PageIntro>
+      <PageIntro title="Would a fresher forecast help?" />
 
       <KeyFinding>
-        A forecast made a few hours ahead is only <strong>{gain.toFixed(0)}% better</strong> than one made two days
-        ahead. The over-forecast is there at <strong>every</strong> horizon, so correcting the bias is worth more than
-        a fresher forecast (which the day-ahead market doesn't allow anyway).
+        A 3-hour-ahead forecast is only <strong>{gain.toFixed(0)}% better</strong> than a 2-day one, and both run too high. Fixing the bias beats waiting.
       </KeyFinding>
 
       <div className="tiles">
-        <StatTile label="Lead times you trade on" value={`${Math.round(leadFrom)}–${Math.round(leadTo)} h`}
-                  note={`Orders at ${cutoff} the day before`} />
-        <StatTile label="Typical miss, 0–3 h ahead" value={mw(first.mae)} tone="good" note="Best case, too late to trade" />
-        <StatTile label={`Typical miss, ${last.lead_from}–${last.lead_to} h ahead`} value={mw(last.mae)} tone="bad"
-                  note="Two days out" />
+        <StatTile label="You trade on" value={`${Math.round(leadFrom)}–${Math.round(leadTo)} h`} note="ahead of delivery" />
+        <StatTile label="Miss 0–3 h ahead" value={mw(first.mae)} tone="good" note="too late to trade" />
+        <StatTile label={`Miss ${last.lead_from}–${last.lead_to} h ahead`} value={mw(last.mae)} tone="bad" note="two days out" />
       </div>
 
       <ChartCard
-        title="Forecast error vs hours ahead of delivery"
-        subtitle="3-hour buckets. Shaded: the lead times your day-ahead orders rely on."
+        title="Error vs hours ahead of delivery"
         table={{
           columns: ['Lead time', 'Typical miss', 'Bias', 'RMSE', 'Forecasts'],
           rows: data.map((b) => [`${b.lead_from}–${b.lead_to} h`, mw(b.mae), signedMw(b.bias), mw(b.rmse), b.count]),

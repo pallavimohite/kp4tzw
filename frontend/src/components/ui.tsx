@@ -1,16 +1,20 @@
 import { useState, type ReactNode } from 'react'
 
-/** One headline number. `tone` colours the number itself: bad news in red, good news in green. */
-export function StatTile({ label, value, note, tone }: {
+/** One headline number. `tone` colours the number itself: bad news in red, good news in green.
+ *  `hint` is the longer explanation, shown on hover so the card itself stays short. */
+export function StatTile({ label, value, note, tone, hint, visual }: {
   label: string
   value: string
   note?: ReactNode
   tone?: 'bad' | 'good'
+  hint?: string
+  visual?: ReactNode
 }) {
   return (
-    <div className="tile">
+    <div className="tile" title={hint}>
       <div className="tile-label">{label}</div>
       <div className={`tile-value ${tone ?? ''}`}>{value}</div>
+      {visual}
       {note && <div className="tile-note">{note}</div>}
     </div>
   )

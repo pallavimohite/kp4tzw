@@ -10,10 +10,10 @@ export function DecisionTimeline({ published, decision, deliveryDate, leadFrom, 
 }) {
   const steps = [
     { cls: 'forecast', label: 'Forecast used', value: published ? dateTime(published) : 'None available',
-      note: 'Newest one published before the deadline' },
-    { cls: 'deadline', label: 'Order deadline', value: dateTime(decision), note: 'Anything published later is ignored' },
+      note: 'newest before deadline' },
+    { cls: 'deadline', label: 'Order deadline', value: dateTime(decision), note: 'later forecasts ignored' },
     { cls: 'delivery', label: 'Power delivered', value: `${longDate(deliveryDate)}, 00:00–24:00`,
-      note: leadFrom != null && leadTo != null ? `${leadFrom}–${leadTo} h after the forecast` : 'No forecast available' },
+      note: leadFrom != null && leadTo != null ? `${leadFrom}–${leadTo} h ahead` : 'no forecast' },
   ]
   return (
     <ol className="timeline" aria-label="Decision timeline">

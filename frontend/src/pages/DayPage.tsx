@@ -35,9 +35,7 @@ export function DayPage({ meta, cutoff, day, setDay }: {
   return (
     <>
       <div className="intro-row">
-        <PageIntro title={`Delivery day: ${longDate(day)}`}>
-          What the desk could see at the order deadline, and what the wind then did.
-        </PageIntro>
+        <PageIntro title={longDate(day)} />
         <div className="day-picker">
           <button className="step-btn" onClick={() => setDay(addDays(day, -1))} disabled={day <= meta.first_delivery_day}
                   aria-label="Previous day">‹</button>
@@ -55,18 +53,17 @@ export function DayPage({ meta, cutoff, day, setDay }: {
                             leadFrom={lead.length ? Math.min(...lead) : null} leadTo={lead.length ? Math.max(...lead) : null} />
 
           <div className="tiles">
-            <StatTile label="Typical miss per hour" value={mw(s.mae)} note={`${s.nmae_pct?.toFixed(0)}% of the day's average wind`} />
-            <StatTile label="Bias (forecast − actual)" value={signedMw(s.bias)} tone={s.bias > 0 ? 'bad' : 'good'}
-                      note={s.bias > 0 ? 'Desk was short of wind' : 'Desk had surplus wind'} />
-            <StatTile label="Worst single hour" value={worst ? signedMw(worst.error) : '–'} tone={worst && worst.error! > 0 ? 'bad' : undefined}
+            <StatTile label="Typical miss" value={mw(s.mae)} note={`${s.nmae_pct?.toFixed(0)}% of avg. wind`} />
+            <StatTile label="Bias" value={signedMw(s.bias)} tone={s.bias > 0 ? 'bad' : 'good'}
+                      note={s.bias > 0 ? 'desk short' : 'desk long'} hint="Average of forecast − actual for this day" />
+            <StatTile label="Worst hour" value={worst ? signedMw(worst.error) : '–'} tone={worst && worst.error! > 0 ? 'bad' : undefined}
                       note={worst ? `at ${clock(worst.time)}` : undefined} />
-            <StatTile label="Average actual wind" value={mw(s.mean_actual)} note="GB national output" />
+            <StatTile label="Actual wind" value={mw(s.mean_actual)} note="daily average" />
           </div>
 
           <ChartCard
-            title="Forecast at the order deadline vs actual generation"
-            subtitle={<>Shaded: where actual wind landed in 80% of January's hours, given the forecast
-              ({signedMw(-data.band.p90)} to {signedMw(-data.band.p10)}).</>}
+            title="Forecast at deadline vs actual"
+            subtitle={`Shaded: 80% likely range (${signedMw(-data.band.p90)} to ${signedMw(-data.band.p10)} around the forecast)`}
             table={{
               columns: ['Time (UK)', 'Actual', 'Forecast', 'Error', 'Lead (h)'],
               rows: data.points.map((p) => [clock(p.time), mw(p.actual), mw(p.forecast), signedMw(p.error), p.lead_hours ?? '–']),

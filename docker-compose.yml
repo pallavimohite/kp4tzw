@@ -1,0 +1,16 @@
+# Run the whole app locally: docker compose up --build  ->  http://localhost:3000
+services:
+  backend:
+    build: ./backend
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 10s
+      retries: 3
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy

@@ -1,0 +1,3 @@
+# Runtime dependencies for the Vercel Python function (see backend/requirements.txt for dev)
+fastapi==0.115.6
+tzdata==2024.2

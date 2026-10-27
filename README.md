@@ -1,4 +1,4 @@
-# Wind Forecast Monitor
+# WindSight: Day-ahead Wind Forecast Monitor
 
 A web app that helps a UK energy utility's day-ahead trading team answer two questions:
 
@@ -40,12 +40,15 @@ actual wind in 9 of 10 hours.
 
 ## Features
 
-- **Daily view:** pick a delivery day and see the decision-time forecast vs actual (30-min), an 80% uncertainty
-  band built from January's error distribution, and when the decision and forecast were made.
-- **Forecast accuracy:** MAE, RMSE, bias, nMAE, P10/P90, daily bias chart, error by hour of day, error histogram,
-  and hardest days (click through to the daily view).
+- **Overview:** headline accuracy for the selected order deadline (MAE, bias, P10–P90 range, worst shortfall),
+  a key-insight banner, daily bias chart, error by hour of day, error distribution and the hardest days
+  (click through to the daily view).
+- **Daily view:** a decision timeline (forecast used → order deadline → delivery day), the decision-time forecast
+  vs actual generation (30-min) and an 80% uncertainty band built from January's error distribution.
 - **Forecast horizon:** error vs lead time using every published forecast, with the day-ahead decision window shaded.
-- **Configurable cutoff** shared across all pages; every chart has a table view; light/dark theme.
+- **Methodology:** the decision rule, data sources, metric definitions and assumptions, in plain language.
+- **Configurable order deadline** (EPEX 09:20, N2EX 09:50 or custom) shared across all pages; every chart has a
+  table view; responsive layout with light/dark theme.
 
 ## Architecture
 
@@ -82,8 +85,8 @@ Elexon API ──(fetch script)──> cached JSON ──> FastAPI services ─�
 │   ├── src/
 │   │   ├── api/client.ts        typed API client
 │   │   ├── hooks/useApi.ts      data-fetching hook
-│   │   ├── components/          stat tiles, chart cards, chart theme
-│   │   ├── pages/               DayPage, AccuracyPage, HorizonPage
+│   │   ├── components/          KPI tiles, chart cards, decision timeline, icons, chart theme
+│   │   ├── pages/               AccuracyPage (Overview), DayPage, HorizonPage, MethodologyPage
 │   │   ├── format.ts            number/date formatting (UK time)
 │   │   └── App.tsx              layout, tabs, shared cutoff selector
 │   ├── nginx.conf               serves the build and proxies /api in Docker

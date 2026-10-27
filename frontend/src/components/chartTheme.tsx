@@ -22,11 +22,13 @@ export const tooltipProps = {
   contentStyle: {
     background: 'var(--surface-1)',
     border: '1px solid var(--border)',
-    borderRadius: 8,
+    borderRadius: 10,
+    boxShadow: 'var(--shadow-lg)',
     color: 'var(--text-primary)',
     fontSize: 13,
+    padding: '10px 12px',
   },
-  labelStyle: { color: 'var(--text-secondary)', marginBottom: 4 },
+  labelStyle: { color: 'var(--text-secondary)', marginBottom: 4, fontWeight: 600 },
 }
 
 // Legend text stays in normal ink; the line swatch next to it carries the colour

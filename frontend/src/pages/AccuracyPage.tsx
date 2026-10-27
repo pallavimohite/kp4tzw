@@ -3,43 +3,56 @@ import {
 } from 'recharts'
 import { api } from '../api/client'
 import { axisProps, color, gridProps, tooltipProps } from '../components/chartTheme'
-import { ChartCard, StatTile, Status } from '../components/ui'
+import { Icon } from '../components/icons'
+import { ChartCard, Chip, Insight, PageIntro, StatTile, Status } from '../components/ui'
 import { gw, mw, shortDate, signedMw } from '../format'
 import { useApi } from '../hooks/useApi'
+
+const gwText = (v: number) => `${(v / 1000).toFixed(1)} GW`
 
 export function AccuracyPage({ cutoff, openDay }: { cutoff: string; openDay: (d: string) => void }) {
   const { data, error, loading } = useApi(() => api.accuracy(cutoff), [cutoff])
   if (!data) return <Status loading={loading} error={error} />
   const o = data.overall
   const worstDays = [...data.by_day].sort((a, b) => b.mae - a.mae).slice(0, 5)
+  const shortDays = data.by_day.filter((d) => d.bias > 0).length
 
   return (
     <div className={loading ? 'reloading' : ''}>
-      <div className="tiles">
-        <StatTile label="Average miss (MAE)" value={mw(o.mae)} hint={`${o.nmae_pct?.toFixed(0)}% of average wind (${mw(o.mean_actual)})`} />
-        <StatTile label="Bias" value={signedMw(o.bias)} tone={o.bias > 0 ? 'warn' : undefined}
-                  hint={o.bias > 0 ? 'Forecasts run high: plan for less wind' : 'Forecasts run low'} />
-        <StatTile label="80% of hours, error within" value={`${signedMw(o.p10)} to ${signedMw(o.p90)}`}
-                  hint="P10 – P90 of forecast − actual" />
-        <StatTile label="Worst single-hour shortfall" value={mw(o.max_over_forecast)} hint={`RMSE ${mw(o.rmse)}`} />
-      </div>
+      <PageIntro eyebrow="Pilot results · January 2026" title="How reliable is the wind forecast you buy against?">
+        Every number on this page uses only the forecast that was available at your {cutoff} order deadline the day
+        before delivery, exactly the information your desk had when placing day-ahead orders.
+      </PageIntro>
 
-      <div className="insight">
-        <strong>What this means for buying:</strong> at this cutoff the forecast over-stated wind by{' '}
-        {mw(o.bias)} on average. Planning for {mw(o.p90)} less wind than forecast (the P90 error)
-        would have covered actual wind in 9 out of 10 hours.
+      <Insight title={`Wind was over-forecast on ${shortDays} of ${data.by_day.length} delivery days`}>
+        On average the forecast promised <strong>{gwText(o.bias)} more wind</strong> than arrived, leaving the desk
+        short. Planning for <strong>{gwText(o.p90)} less wind than forecast</strong> would have covered actual
+        generation in 9 out of 10 hours.
+      </Insight>
+
+      <div className="tiles">
+        <StatTile icon="target" label="Average forecast error" value={mw(o.mae)}
+                  chip={{ tone: 'info', text: `${o.nmae_pct?.toFixed(0)}% of avg. wind` }}
+                  hint={`MAE · avg. wind ${mw(o.mean_actual)}`} />
+        <StatTile icon="trend" label="Systematic bias" value={signedMw(o.bias)}
+                  chip={o.bias > 0 ? { tone: 'warn', text: 'Over-forecast' } : { tone: 'good', text: 'Under-forecast' }}
+                  hint="Forecast − actual" />
+        <StatTile icon="range" label="Typical error range" value={`${gwText(o.p10)} to ${gwText(o.p90)}`}
+                  chip={{ tone: 'neutral', text: '80% of hours' }} hint="P10 – P90" />
+        <StatTile icon="alert" label="Worst hourly shortfall" value={mw(o.max_over_forecast)}
+                  chip={{ tone: 'warn', text: 'Peak risk' }} hint={`RMSE ${mw(o.rmse)}`} />
       </div>
 
       <ChartCard
-        title="Daily bias: forecast − actual"
-        subtitle={<>Above zero (red): wind over-forecast, buyer short. Below zero (blue): surplus. Click a bar to open that day.</>}
+        title="Daily bias"
+        subtitle={<>Red: wind over-forecast, desk short of power. Blue: wind under-forecast, surplus. Click a bar to open that day.</>}
         table={{ columns: ['Delivery day', 'Bias', 'MAE'], rows: data.by_day.map((d) => [d.date, signedMw(d.bias), mw(d.mae)]) }}
       >
         <div className="chart-md">
           <ResponsiveContainer>
-            <BarChart data={data.by_day} margin={{ top: 8, right: 16, bottom: 0, left: 0 }}>
+            <BarChart data={data.by_day} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
               <CartesianGrid {...gridProps} />
-              <XAxis dataKey="date" {...axisProps} tickFormatter={shortDate} interval={3} />
+              <XAxis dataKey="date" {...axisProps} tickFormatter={shortDate} interval="preserveStartEnd" minTickGap={24} />
               <YAxis {...axisProps} tickFormatter={gw} width={56} />
               <ReferenceLine y={0} stroke="var(--baseline)" />
               <Tooltip {...tooltipProps} cursor={{ fill: 'var(--hover)' }} labelFormatter={(d) => shortDate(String(d))}
@@ -55,15 +68,15 @@ export function AccuracyPage({ cutoff, openDay }: { cutoff: string; openDay: (d:
 
       <div className="grid-2">
         <ChartCard
-          title="Average miss by hour of day"
-          subtitle="MAE per delivery hour (UK time)"
+          title="Error by hour of day"
+          subtitle="Average absolute error per delivery hour (UK time)"
           table={{ columns: ['Hour', 'MAE', 'Bias'], rows: data.by_hour.map((h) => [`${h.hour}:00`, mw(h.mae), signedMw(h.bias)]) }}
         >
           <div className="chart-sm">
             <ResponsiveContainer>
               <BarChart data={data.by_hour} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
                 <CartesianGrid {...gridProps} />
-                <XAxis dataKey="hour" {...axisProps} interval={2} tickFormatter={(h) => `${h}:00`} />
+                <XAxis dataKey="hour" {...axisProps} interval="preserveStartEnd" minTickGap={24} tickFormatter={(h) => `${h}:00`} />
                 <YAxis {...axisProps} tickFormatter={gw} width={56} />
                 <Tooltip {...tooltipProps} cursor={{ fill: 'var(--hover)' }} labelFormatter={(h) => `${h}:00`}
                          formatter={(v) => [mw(+v), 'MAE']} />
@@ -74,14 +87,13 @@ export function AccuracyPage({ cutoff, openDay }: { cutoff: string; openDay: (d:
         </ChartCard>
 
         <ChartCard
-          title="How big are the misses?"
-          subtitle="Number of hours by error size (500 MW bins)"
+          title="Distribution of errors"
+          subtitle="Hours by size of miss (500 MW bins). Most misses are on the short side."
           table={{ columns: ['Error range', 'Hours'], rows: data.histogram.map((b) => [`${signedMw(b.from)} to ${signedMw(b.to)}`, b.count]) }}
         >
           <div className="chart-sm">
             <ResponsiveContainer>
-              <BarChart data={data.histogram}
-                        margin={{ top: 8, right: 8, bottom: 0, left: 0 }} barCategoryGap={2}>
+              <BarChart data={data.histogram} margin={{ top: 8, right: 8, bottom: 0, left: 0 }} barCategoryGap={2}>
                 <CartesianGrid {...gridProps} />
                 <XAxis dataKey="from" {...axisProps} tickFormatter={gw} />
                 <YAxis {...axisProps} width={40} allowDecimals={false} />
@@ -97,14 +109,18 @@ export function AccuracyPage({ cutoff, openDay }: { cutoff: string; openDay: (d:
         </ChartCard>
       </div>
 
-      <ChartCard title="Hardest days to forecast" subtitle="Highest average miss. Click to inspect.">
+      <ChartCard title="Hardest days to forecast" subtitle="Highest average error. Select a day to inspect it hour by hour.">
         <div className="table-wrap">
           <table>
-            <thead><tr><th>Delivery day</th><th>MAE</th><th>Bias</th><th>Worst shortfall</th></tr></thead>
+            <thead><tr><th>Delivery day</th><th>Avg. error</th><th>Bias</th><th>Worst hour</th><th /></tr></thead>
             <tbody>
               {worstDays.map((d) => (
                 <tr key={d.date} className="clickable" onClick={() => openDay(d.date)}>
-                  <td>{shortDate(d.date)}</td><td>{mw(d.mae)}</td><td>{signedMw(d.bias)}</td><td>{mw(d.max_over_forecast)}</td>
+                  <td><strong>{shortDate(d.date)}</strong></td>
+                  <td>{mw(d.mae)}</td>
+                  <td><Chip tone={d.bias > 0 ? 'warn' : 'good'}>{signedMw(d.bias)}</Chip></td>
+                  <td>{mw(d.max_over_forecast)}</td>
+                  <td className="row-action">View <Icon name="chevronRight" size={14} /></td>
                 </tr>
               ))}
             </tbody>

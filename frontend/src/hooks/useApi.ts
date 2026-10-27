@@ -1,0 +1,21 @@
+import { useEffect, useState } from 'react'
+
+/** Fetch data whenever `deps` change. Keeps the previous data while reloading (no flicker). */
+export function useApi<T>(load: () => Promise<T>, deps: unknown[]) {
+  const [data, setData] = useState<T | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+    load()
+      .then((d) => { if (!cancelled) { setData(d); setError(null) } })
+      .catch((e: Error) => { if (!cancelled) setError(e.message) })
+      .finally(() => { if (!cancelled) setLoading(false) })
+    return () => { cancelled = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps)
+
+  return { data, error, loading }
+}

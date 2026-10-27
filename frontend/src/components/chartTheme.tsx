@@ -13,7 +13,7 @@ const mono = "'IBM Plex Mono', ui-monospace, monospace"
 
 export const axisProps = {
   stroke: color.axis,
-  tick: { fill: color.axis, fontSize: 11, fontFamily: mono },
+  tick: { fill: 'var(--text-secondary)', fontSize: 12.5, fontFamily: mono },
   tickLine: false,
   axisLine: { stroke: 'var(--baseline)' },
 }
@@ -27,16 +27,16 @@ export const tooltipProps = {
     borderRadius: 6,
     boxShadow: 'var(--shadow-lg)',
     color: 'var(--text-primary)',
-    fontSize: 13,
-    padding: '8px 10px',
+    fontSize: 14.5,
+    padding: '10px 12px',
   },
-  labelStyle: { color: 'var(--text-secondary)', marginBottom: 4, fontFamily: mono, fontSize: 12 },
+  labelStyle: { color: 'var(--text-secondary)', marginBottom: 4, fontFamily: mono, fontSize: 13 },
 }
 
 // Legend text stays in normal ink; the line swatch next to it carries the colour
 export const legendProps = {
   iconType: 'plainline' as const,
-  wrapperStyle: { fontSize: 13 },
+  wrapperStyle: { fontSize: 14.5 },
   formatter: (value: string) => <span style={{ color: 'var(--text-secondary)' }}>{value}</span>,
 }
 
@@ -45,6 +45,6 @@ export const annotation = (value: string, position: 'top' | 'bottom' | 'insideTo
   value,
   position,
   fill: 'var(--text-primary)',
-  fontSize: 12,
-  fontWeight: 500,
+  fontSize: 13.5,
+  fontWeight: 600,
 })

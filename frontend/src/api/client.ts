@@ -50,7 +50,6 @@ export interface AccuracyReport {
   by_hour: (Summary & { hour: number })[]
   by_day: (Summary & { date: string })[]
   histogram: { from: number; to: number; count: number }[]
-  series: { time: string; forecast: number; actual: number }[]
 }
 
 export type HorizonBucket = Summary & { lead_from: number; lead_to: number }

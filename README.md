@@ -40,10 +40,9 @@ actual wind in 9 of 10 hours.
 
 ## Features
 
-- **Overview:** a one-line headline, a 31-day calendar strip (red = desk short, blue = surplus; click a day),
-  headline numbers with mini visuals (typical miss, bias sparkline, 80% error range bar, worst hour), the whole of
-  January as forecast vs actual with the over-forecast gap shaded, error by hour of day, error distribution, and
-  the five hardest days.
+- **Overview:** the key finding in one line, headline numbers (typical miss, bias, 80% error range, worst hour),
+  daily bias with the worst days labelled, error by hour of day, error distribution, and the five hardest days
+  (click through to the daily view).
 - **Daily view:** a timeline of forecast used → order deadline → delivery, the decision-time forecast vs actual
   (30-min), an 80% uncertainty band from January's errors, and the day's largest miss marked on the chart.
 - **Forecast horizon:** error vs lead time using every published forecast, with the day-ahead decision window shaded.
@@ -144,7 +143,7 @@ cd backend && python -m scripts.fetch_data
 |---|---|
 | `GET /api/meta` | Delivery-day range, default cutoff, cutoff presets |
 | `GET /api/day/{date}?cutoff=HH:MM` | Decision-time forecast vs actual for one delivery day, plus uncertainty band |
-| `GET /api/accuracy?cutoff=HH:MM&start=&end=` | Accuracy metrics, breakdowns and the hourly forecast-vs-actual series |
+| `GET /api/accuracy?cutoff=HH:MM&start=&end=` | Accuracy metrics and breakdowns over delivery days |
 | `GET /api/horizon?bucket_hours=3` | Error by forecast lead time |
 
 Interactive docs: `/docs` (Swagger UI) when running the backend.

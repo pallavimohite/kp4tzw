@@ -58,8 +58,6 @@ def accuracy_report(points: list[Point]) -> dict:
         "by_hour": [{"hour": h, **stats(g)} for h, g in sorted(by_hour.items())],
         "by_day": [{"date": d, **stats(g)} for d, g in sorted(by_day.items())],
         "histogram": histogram(errors, bin_width=500),
-        # Every scored hour, for the month-long forecast vs actual chart
-        "series": [{"time": p.start_time, "forecast": p.forecast, "actual": p.actual} for p in points],
     }
 
 

@@ -43,7 +43,7 @@ export function HorizonPage({ cutoff }: { cutoff: string }) {
       >
         <div className="chart-lg">
           <ResponsiveContainer>
-            <LineChart data={rows} margin={{ top: 8, right: 8, bottom: 16, left: 0 }}>
+            <LineChart data={rows} margin={{ top: 8, right: 20, bottom: 16, left: 0 }}>
               <CartesianGrid {...gridProps} />
               <ReferenceArea x1={leadFrom} x2={Math.min(leadTo, 48)} fill="var(--accent-soft)" stroke="none"
                              label={annotation(`Your ${cutoff} orders`, 'insideTop')} />
@@ -51,7 +51,7 @@ export function HorizonPage({ cutoff }: { cutoff: string }) {
                      label={{ value: 'hours ahead of delivery', position: 'insideBottom', offset: -10, fill: 'var(--muted)', fontSize: 12 }} />
               <YAxis {...axisProps} tickFormatter={gw} width={58} domain={[0, 'auto']} />
               <Tooltip {...tooltipProps} labelFormatter={(v) => `about ${v} h ahead`} formatter={(v, name) => [mw(+v), name]} />
-              <Legend {...legendProps} verticalAlign="top" wrapperStyle={{ fontSize: 13, paddingBottom: 8 }} />
+              <Legend {...legendProps} verticalAlign="top" wrapperStyle={{ fontSize: 14.5, paddingBottom: 8 }} />
               <Line dataKey="mae" name="Typical miss (MAE)" stroke={color.actual} strokeWidth={2} dot={{ r: 3 }} isAnimationActive={false} />
               <Line dataKey="bias" name="Bias (forecast − actual)" stroke={color.forecast} strokeWidth={2} dot={{ r: 3 }} isAnimationActive={false} />
             </LineChart>

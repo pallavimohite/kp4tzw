@@ -160,6 +160,9 @@ Interactive docs: `/docs` (Swagger UI) when running the backend.
 
 ## Use of AI tools
 
-This project was built with help from an AI coding assistant (Claude Code), used for scaffolding, code
-generation, domain research (day-ahead gate closure times) and review. All design decisions, data checks and
-results were reviewed and verified by me.
+As allowed in the brief, I used an AI coding assistant (Claude Code) during this project. It helped me set up the
+project structure, write parts of the backend and frontend code, look up domain details (such as day-ahead auction
+gate closure times) and iterate on the UI.
+
+I directed the work: I set the requirements, chose between the approaches and design options it proposed, checked
+the results against the Elexon data, and reviewed and tested the application before submitting it.
